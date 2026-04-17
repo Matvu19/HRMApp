@@ -34,15 +34,17 @@ class NotificationViewModel @Inject constructor(
             try {
                 val session = sessionManager.sessionFlow.first()
                 val response = notificationApi.getNotifications(session.userId)
+                val items = response.data ?: emptyList()
 
                 _uiState.value = UiState(
                     isLoading = false,
-                    items = response.data ?: emptyList(),
-                    message = if (response.data.isNullOrEmpty()) "Không có thông báo nào" else ""
+                    items = items,
+                    message = if (items.isEmpty()) "Không có thông báo nào" else ""
                 )
             } catch (e: Exception) {
                 _uiState.value = UiState(
                     isLoading = false,
+                    items = emptyList(),
                     message = e.message ?: "Không tải được thông báo"
                 )
             }
@@ -56,6 +58,7 @@ class NotificationViewModel @Inject constructor(
                 load()
             } catch (e: Exception) {
                 _uiState.value = _uiState.value?.copy(
+                    isLoading = false,
                     message = e.message ?: "Không thể cập nhật trạng thái"
                 )
             }

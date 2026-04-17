@@ -1,70 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/page_background"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <Button
-        android:id="@+id/btnBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="← Quay lại" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Hàng chờ phê duyệt"
-        android:textColor="@color/text_primary"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <Button
-        android:id="@+id/btnRefreshApproval"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Làm mới" />
-
-    <TextView
-        android:id="@+id/tvApprovalMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text=""
-        android:textColor="@color/text_secondary" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvApprovals"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:layout_weight="1" />
+    android:background="@color/page_background">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <Button
-            android:id="@+id/btnApprove"
-            android:layout_width="0dp"
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Duyệt" />
+            android:background="@drawable/bg_button_outline"
+            android:text="← Quay lại"
+            android:textAllCaps="false"
+            android:textColor="@color/button_text_outline"
+            app:backgroundTint="@null" />
 
-        <Space
-            android:layout_width="12dp"
-            android:layout_height="1dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Hàng chờ phê duyệt"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <Button
-            android:id="@+id/btnReject"
-            android:layout_width="0dp"
+            android:id="@+id/btnRefreshApproval"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Từ chối" />
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_button_outline"
+            android:text="Làm mới"
+            android:textAllCaps="false"
+            android:textColor="@color/button_text_outline"
+            app:backgroundTint="@null" />
+
+        <TextView
+            android:id="@+id/tvApprovalMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text=""
+            android:textColor="@color/text_secondary" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvApprovals"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/layoutApprovalActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnApprove"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button_primary"
+                android:text="Duyệt"
+                android:textAllCaps="false"
+                android:textColor="@color/button_text_primary"
+                app:backgroundTint="@null" />
+
+            <Space
+                android:layout_width="12dp"
+                android:layout_height="1dp" />
+
+            <Button
+                android:id="@+id/btnReject"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button_outline"
+                android:text="Từ chối"
+                android:textAllCaps="false"
+                android:textColor="@color/button_text_outline"
+                app:backgroundTint="@null" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressApproval"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+</FrameLayout>

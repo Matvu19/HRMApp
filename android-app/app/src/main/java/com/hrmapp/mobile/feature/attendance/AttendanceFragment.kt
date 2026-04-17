@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.hrmapp.mobile.core.ui.setSafeClickListener
 import com.hrmapp.mobile.databinding.FragmentAttendanceBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,27 +35,33 @@ class AttendanceFragment : Fragment() {
         binding.rvAttendance.layoutManager = LinearLayoutManager(requireContext())
         binding.rvAttendance.adapter = adapter
 
-        binding.btnCheckIn.setOnClickListener {
+        binding.btnCheckIn.setSafeClickListener {
             viewModel.checkIn()
         }
 
-        binding.btnCheckOut.setOnClickListener {
+        binding.btnCheckOut.setSafeClickListener {
             viewModel.checkOut()
         }
 
-        binding.btnRefreshAttendance.setOnClickListener {
+        binding.btnRefreshAttendance.setSafeClickListener {
             viewModel.loadHistory()
         }
 
         viewModel.loadHistory()
 
         viewModel.uiState.observe(viewLifecycleOwner) { state ->
+            binding.progressAttendance.visibility =
+                if (state.isLoading) View.VISIBLE else View.GONE
             adapter.submitList(state.items)
             binding.tvAttendanceMessage.text = state.message
             binding.tvLastAction.text =
                 if (state.message.isNotBlank()) "Lần thao tác gần nhất: ${state.message}"
                 else "Lần thao tác gần nhất: chưa có"
             binding.tvQueueCount.text = "Số thao tác đang chờ: ${state.queueCount}"
+
+            if (!state.isLoading && state.message.startsWith("Thành công:")) {
+                Snackbar.make(binding.root, state.message, Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 

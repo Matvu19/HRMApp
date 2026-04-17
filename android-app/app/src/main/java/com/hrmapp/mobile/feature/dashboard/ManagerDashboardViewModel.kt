@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hrmapp.mobile.core.network.ApprovalApi
+import com.hrmapp.mobile.core.network.ApprovalStepItem
 import com.hrmapp.mobile.core.network.DashboardApi
 import com.hrmapp.mobile.core.network.ManagerDashboardData
 import com.hrmapp.mobile.core.storage.SessionManager
@@ -15,14 +17,14 @@ import javax.inject.Inject
 @HiltViewModel
 class ManagerDashboardViewModel @Inject constructor(
     private val dashboardApi: DashboardApi,
+    private val approvalApi: ApprovalApi,
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
     data class UiState(
         val isLoading: Boolean = false,
         val data: ManagerDashboardData? = null,
-        val employeeId: Long = 0L,
-        val roleCode: String = "",
+        val pendingApprovals: List<ApprovalStepItem> = emptyList(),
         val message: String = ""
     )
 
@@ -42,20 +44,21 @@ class ManagerDashboardViewModel @Inject constructor(
                 ) {
                     _uiState.value = UiState(
                         isLoading = false,
-                        roleCode = session.roleCode,
                         message = "Bạn không có quyền xem bảng điều khiển quản lý"
                     )
                     return@launch
                 }
 
-                val response = dashboardApi.getManagerDashboard(session.employeeId)
+                val dashboardResponse = dashboardApi.getManagerDashboard(session.employeeId)
+                val approvalResponse = approvalApi.getPending(session.employeeId)
+
+                val pendingList = approvalResponse.data ?: emptyList()
 
                 _uiState.value = UiState(
                     isLoading = false,
-                    data = response.data,
-                    employeeId = session.employeeId,
-                    roleCode = session.roleCode,
-                    message = if (response.data == null) "Không có dữ liệu" else ""
+                    data = dashboardResponse.data,
+                    pendingApprovals = pendingList,
+                    message = if (dashboardResponse.data == null) "Không có dữ liệu dashboard" else ""
                 )
             } catch (e: Exception) {
                 _uiState.value = UiState(

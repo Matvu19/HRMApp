@@ -20,6 +20,7 @@ class LeaveViewModel @Inject constructor(
 ) : ViewModel() {
 
     data class UiState(
+        val isLoading: Boolean = false,
         val items: List<LeaveItem> = emptyList(),
         val message: String = ""
     )
@@ -29,16 +30,22 @@ class LeaveViewModel @Inject constructor(
 
     fun loadHistory() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value?.copy(isLoading = true)
+
             try {
                 val session = sessionManager.sessionFlow.first()
                 val response = leaveApi.myRequests(session.employeeId)
+                val items = response.data ?: emptyList()
 
-                _uiState.value = _uiState.value?.copy(
-                    items = response.data ?: emptyList(),
-                    message = if (response.data.isNullOrEmpty()) "Chưa có đơn nghỉ nào" else ""
+                _uiState.value = UiState(
+                    isLoading = false,
+                    items = items,
+                    message = if (items.isEmpty()) "Chưa có đơn nghỉ nào" else ""
                 )
             } catch (e: Exception) {
-                _uiState.value = _uiState.value?.copy(
+                _uiState.value = UiState(
+                    isLoading = false,
+                    items = emptyList(),
                     message = e.message ?: "Không tải được lịch sử đơn nghỉ"
                 )
             }
@@ -51,6 +58,8 @@ class LeaveViewModel @Inject constructor(
         reason: String
     ) {
         viewModelScope.launch {
+            _uiState.value = _uiState.value?.copy(isLoading = true)
+
             try {
                 val session = sessionManager.sessionFlow.first()
 
@@ -66,12 +75,14 @@ class LeaveViewModel @Inject constructor(
                 )
 
                 _uiState.value = _uiState.value?.copy(
+                    isLoading = false,
                     message = "Đã gửi đơn nghỉ #${response.data?.leaveRequestId ?: ""}"
                 )
 
                 loadHistory()
             } catch (e: Exception) {
                 _uiState.value = _uiState.value?.copy(
+                    isLoading = false,
                     message = e.message ?: "Không gửi được đơn nghỉ"
                 )
             }

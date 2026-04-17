@@ -59,6 +59,7 @@ class ApprovalViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = UiState(
                     isLoading = false,
+                    items = emptyList(),
                     message = e.message ?: "Không tải được hàng chờ duyệt"
                 )
             }
@@ -85,6 +86,7 @@ class ApprovalViewModel @Inject constructor(
                 load()
             } catch (e: Exception) {
                 _uiState.value = _uiState.value?.copy(
+                    isLoading = false,
                     message = e.message ?: "Không thực hiện được thao tác"
                 )
             }

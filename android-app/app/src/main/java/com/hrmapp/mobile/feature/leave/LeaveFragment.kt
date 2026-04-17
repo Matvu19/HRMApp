@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.hrmapp.mobile.core.ui.setSafeClickListener
 import com.hrmapp.mobile.databinding.FragmentLeaveBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,7 +35,7 @@ class LeaveFragment : Fragment() {
         binding.rvLeaveHistory.layoutManager = LinearLayoutManager(requireContext())
         binding.rvLeaveHistory.adapter = adapter
 
-        binding.btnSubmitLeave.setOnClickListener {
+        binding.btnSubmitLeave.setSafeClickListener {
             val dateFrom = binding.etDateFrom.text.toString().ifBlank { "2026-04-20" }
             val dateTo = binding.etDateTo.text.toString().ifBlank { "2026-04-21" }
             val reason = binding.etReason.text.toString().ifBlank { "Việc gia đình" }
@@ -45,15 +47,21 @@ class LeaveFragment : Fragment() {
             )
         }
 
-        binding.btnRefreshLeave.setOnClickListener {
+        binding.btnRefreshLeave.setSafeClickListener {
             viewModel.loadHistory()
         }
 
         viewModel.loadHistory()
 
         viewModel.uiState.observe(viewLifecycleOwner) { state ->
+            binding.progressLeave.visibility =
+                if (state.isLoading) View.VISIBLE else View.GONE
             binding.tvLeaveResult.text = state.message
             adapter.submitList(state.items)
+
+            if (!state.isLoading && state.message.startsWith("Đã gửi đơn nghỉ")) {
+                Snackbar.make(binding.root, state.message, Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 

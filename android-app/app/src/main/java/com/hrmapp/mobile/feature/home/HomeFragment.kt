@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.hrmapp.mobile.R
+import com.hrmapp.mobile.core.ui.setSafeClickListener
 import com.hrmapp.mobile.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,25 +34,34 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.loadSession()
 
-        binding.btnOpenApproval.setOnClickListener {
+        binding.btnOpenApproval.setSafeClickListener {
             findNavController().navigate(R.id.approvalFragment)
         }
 
-        binding.btnOpenDashboard.setOnClickListener {
+        binding.btnOpenDashboard.setSafeClickListener {
             findNavController().navigate(R.id.dashboardFragment)
         }
 
-        binding.btnOpenAttendance.setOnClickListener {
+        binding.btnOpenAttendance.setSafeClickListener {
             findNavController().navigate(R.id.attendanceFragment)
         }
 
-        binding.btnOpenLeave.setOnClickListener {
+        binding.btnOpenLeave.setSafeClickListener {
             findNavController().navigate(R.id.leaveFragment)
         }
 
-        binding.btnLogout.setOnClickListener {
+        binding.btnLogout.setSafeClickListener {
             viewModel.logout {
-                findNavController().navigate(R.id.loginFragment)
+                val navController = findNavController()
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(navController.graph.startDestinationId, true)
+                    .build()
+
+                navController.navigate(
+                    R.id.loginFragment,
+                    bundleOf("logout_message" to "Bạn đã đăng xuất"),
+                    navOptions
+                )
             }
         }
 

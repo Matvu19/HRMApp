@@ -32,19 +32,25 @@ class AttendanceViewModel @Inject constructor(
 
     fun loadHistory() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value?.copy(isLoading = true)
+
             try {
                 val session = sessionManager.sessionFlow.first()
                 val response = attendanceApi.history(session.employeeId)
+                val items = response.data ?: emptyList()
 
-                _uiState.value = _uiState.value?.copy(
+                _uiState.value = UiState(
                     isLoading = false,
-                    items = response.data ?: emptyList(),
-                    message = if (response.data.isNullOrEmpty()) "Chưa có lịch sử chấm công" else ""
+                    items = items,
+                    message = if (items.isEmpty()) "Chưa có lịch sử chấm công" else "",
+                    queueCount = _uiState.value?.queueCount ?: 0
                 )
             } catch (e: Exception) {
-                _uiState.value = _uiState.value?.copy(
+                _uiState.value = UiState(
                     isLoading = false,
-                    message = e.message ?: "Không tải được lịch sử chấm công"
+                    items = emptyList(),
+                    message = e.message ?: "Không tải được lịch sử chấm công",
+                    queueCount = _uiState.value?.queueCount ?: 0
                 )
             }
         }
@@ -60,6 +66,8 @@ class AttendanceViewModel @Inject constructor(
 
     private fun submit(eventType: String, key: String) {
         viewModelScope.launch {
+            _uiState.value = _uiState.value?.copy(isLoading = true)
+
             try {
                 val session = sessionManager.sessionFlow.first()
 
@@ -77,6 +85,7 @@ class AttendanceViewModel @Inject constructor(
                 )
 
                 _uiState.value = _uiState.value?.copy(
+                    isLoading = false,
                     message = "Thành công: ${response.data?.eventType ?: eventType}",
                     queueCount = 0
                 )
@@ -84,6 +93,7 @@ class AttendanceViewModel @Inject constructor(
                 loadHistory()
             } catch (e: Exception) {
                 _uiState.value = _uiState.value?.copy(
+                    isLoading = false,
                     message = "Không gửi được, đã đưa vào hàng chờ",
                     queueCount = (_uiState.value?.queueCount ?: 0) + 1
                 )

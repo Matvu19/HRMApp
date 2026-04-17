@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -36,6 +37,11 @@ class LoginFragment : Fragment() {
         observeGate()
         observeLogin()
 
+        val logoutMessage = arguments?.getString("logout_message")
+        if (!logoutMessage.isNullOrBlank()) {
+            binding.tvLoginMessage.text = logoutMessage
+        }
+
         splashGateViewModel.checkSession()
 
         binding.btnLogin.setOnClickListener {
@@ -57,7 +63,7 @@ class LoginFragment : Fragment() {
                 currentId == R.id.loginFragment
             ) {
                 didAutoNavigate = true
-                navController.navigate(R.id.action_loginFragment_to_homeFragment)
+                navController.navigate(R.id.homeFragment)
             }
         }
     }
@@ -82,7 +88,7 @@ class LoginFragment : Fragment() {
 
                 val navController = findNavController()
                 if (navController.currentDestination?.id == R.id.loginFragment) {
-                    navController.navigate(R.id.action_loginFragment_to_homeFragment)
+                    navController.navigate(R.id.homeFragment)
                 }
             }
         }
