@@ -6,33 +6,55 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hrmapp.mobile.core.network.DashboardApi
 import com.hrmapp.mobile.core.network.ManagerDashboardData
+import com.hrmapp.mobile.core.storage.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ManagerDashboardViewModel @Inject constructor(
-    private val dashboardApi: DashboardApi
+    private val dashboardApi: DashboardApi,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     data class UiState(
         val isLoading: Boolean = false,
         val data: ManagerDashboardData? = null,
+        val employeeId: Long = 0L,
+        val roleCode: String = "",
         val message: String = ""
     )
 
     private val _uiState = MutableLiveData(UiState())
     val uiState: LiveData<UiState> = _uiState
 
-    fun load(managerEmployeeId: Long) {
+    fun load() {
         viewModelScope.launch {
             _uiState.value = UiState(isLoading = true)
 
             try {
-                val response = dashboardApi.getManagerDashboard(managerEmployeeId)
+                val session = sessionManager.sessionFlow.first()
+
+                if (!session.roleCode.equals("MANAGER", true)
+                    && !session.roleCode.equals("ADMIN", true)
+                    && !session.roleCode.equals("HR", true)
+                ) {
+                    _uiState.value = UiState(
+                        isLoading = false,
+                        roleCode = session.roleCode,
+                        message = "Bạn không có quyền xem bảng điều khiển quản lý"
+                    )
+                    return@launch
+                }
+
+                val response = dashboardApi.getManagerDashboard(session.employeeId)
+
                 _uiState.value = UiState(
                     isLoading = false,
                     data = response.data,
+                    employeeId = session.employeeId,
+                    roleCode = session.roleCode,
                     message = if (response.data == null) "Không có dữ liệu" else ""
                 )
             } catch (e: Exception) {

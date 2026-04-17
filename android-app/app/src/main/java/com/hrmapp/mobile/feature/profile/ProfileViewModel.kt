@@ -1,11 +1,11 @@
-package com.hrmapp.mobile.feature.notification
+package com.hrmapp.mobile.feature.profile
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hrmapp.mobile.core.network.NotificationApi
-import com.hrmapp.mobile.core.network.NotificationItem
+import com.hrmapp.mobile.core.network.EmployeeApi
+import com.hrmapp.mobile.core.network.EmployeeProfileData
 import com.hrmapp.mobile.core.storage.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
@@ -13,14 +13,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NotificationViewModel @Inject constructor(
-    private val notificationApi: NotificationApi,
+class ProfileViewModel @Inject constructor(
+    private val employeeApi: EmployeeApi,
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
     data class UiState(
         val isLoading: Boolean = false,
-        val items: List<NotificationItem> = emptyList(),
+        val profile: EmployeeProfileData? = null,
+        val username: String = "",
+        val roleCode: String = "",
         val message: String = ""
     )
 
@@ -33,30 +35,19 @@ class NotificationViewModel @Inject constructor(
 
             try {
                 val session = sessionManager.sessionFlow.first()
-                val response = notificationApi.getNotifications(session.userId)
+                val response = employeeApi.getEmployeeById(session.employeeId)
 
                 _uiState.value = UiState(
                     isLoading = false,
-                    items = response.data ?: emptyList(),
-                    message = if (response.data.isNullOrEmpty()) "Không có thông báo nào" else ""
+                    profile = response.data,
+                    username = session.username,
+                    roleCode = session.roleCode,
+                    message = if (response.data == null) "Không tải được hồ sơ" else ""
                 )
             } catch (e: Exception) {
                 _uiState.value = UiState(
                     isLoading = false,
-                    message = e.message ?: "Không tải được thông báo"
-                )
-            }
-        }
-    }
-
-    fun markRead(notificationId: Long) {
-        viewModelScope.launch {
-            try {
-                notificationApi.markRead(notificationId)
-                load()
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value?.copy(
-                    message = e.message ?: "Không thể cập nhật trạng thái"
+                    message = e.message ?: "Không tải được hồ sơ"
                 )
             }
         }

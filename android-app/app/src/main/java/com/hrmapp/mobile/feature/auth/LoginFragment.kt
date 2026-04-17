@@ -18,7 +18,10 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: LoginViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels()
+    private val splashGateViewModel: SplashGateViewModel by viewModels()
+
+    private var didAutoNavigate = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,18 +33,37 @@ class LoginFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        observeGate()
+        observeLogin()
+
+        splashGateViewModel.checkSession()
+
         binding.btnLogin.setOnClickListener {
-            viewModel.login(
+            loginViewModel.login(
                 username = binding.etUsername.text.toString(),
                 password = binding.etPassword.text.toString()
             )
         }
-
-        observeUi()
     }
 
-    private fun observeUi() {
-        viewModel.uiState.observe(viewLifecycleOwner) { state ->
+    private fun observeGate() {
+        splashGateViewModel.gateState.observe(viewLifecycleOwner) { state ->
+            val navController = findNavController()
+            val currentId = navController.currentDestination?.id
+
+            if (state.checked &&
+                state.loggedIn &&
+                !didAutoNavigate &&
+                currentId == R.id.loginFragment
+            ) {
+                didAutoNavigate = true
+                navController.navigate(R.id.action_loginFragment_to_homeFragment)
+            }
+        }
+    }
+
+    private fun observeLogin() {
+        loginViewModel.uiState.observe(viewLifecycleOwner) { state ->
             binding.progressLogin.visibility =
                 if (state.isLoading) View.VISIBLE else View.GONE
 
@@ -58,7 +80,10 @@ class LoginFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                val navController = findNavController()
+                if (navController.currentDestination?.id == R.id.loginFragment) {
+                    navController.navigate(R.id.action_loginFragment_to_homeFragment)
+                }
             }
         }
     }

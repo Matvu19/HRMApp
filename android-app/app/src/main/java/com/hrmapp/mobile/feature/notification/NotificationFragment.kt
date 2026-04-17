@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.hrmapp.mobile.databinding.FragmentNotificationBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,6 +17,7 @@ class NotificationFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: NotificationViewModel by viewModels()
+    private lateinit var adapter: NotificationAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,26 +29,22 @@ class NotificationFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.load(2L)
-
-        binding.btnMarkRead.setOnClickListener {
-            val item = viewModel.uiState.value?.item ?: return@setOnClickListener
+        adapter = NotificationAdapter { item ->
             viewModel.markRead(item.notificationEventId)
         }
 
-        viewModel.uiState.observe(viewLifecycleOwner) { state ->
-            val item = state.item
-            if (item != null) {
-                binding.tvNotificationTitle.text = item.title
-                binding.tvNotificationBody.text = item.messageText
-                binding.tvNotificationDeeplink.text = item.deeplinkUrl
-                binding.tvNotificationStatus.text =
-                    if (item.readAt == null) "Chưa đọc" else "Đã đọc"
-            }
+        binding.rvNotifications.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvNotifications.adapter = adapter
 
-            if (state.message.isNotBlank()) {
-                binding.tvNotificationStatus.text = state.message
-            }
+        binding.btnRefreshNotifications.setOnClickListener {
+            viewModel.load()
+        }
+
+        viewModel.load()
+
+        viewModel.uiState.observe(viewLifecycleOwner) { state ->
+            adapter.submitList(state.items)
+            binding.tvNotificationMessage.text = state.message
         }
     }
 

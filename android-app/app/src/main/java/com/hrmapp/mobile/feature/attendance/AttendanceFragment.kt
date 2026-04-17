@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.hrmapp.mobile.databinding.FragmentAttendanceBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,6 +17,7 @@ class AttendanceFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: AttendanceViewModel by viewModels()
+    private lateinit var adapter: AttendanceAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,6 +29,10 @@ class AttendanceFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        adapter = AttendanceAdapter()
+        binding.rvAttendance.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvAttendance.adapter = adapter
+
         binding.btnCheckIn.setOnClickListener {
             viewModel.checkIn()
         }
@@ -35,10 +41,18 @@ class AttendanceFragment : Fragment() {
             viewModel.checkOut()
         }
 
+        binding.btnRefreshAttendance.setOnClickListener {
+            viewModel.loadHistory()
+        }
+
+        viewModel.loadHistory()
+
         viewModel.uiState.observe(viewLifecycleOwner) { state ->
-            if (state.message.isNotBlank()) {
-                binding.tvLastAction.text = "Lần thao tác gần nhất: ${state.message}"
-            }
+            adapter.submitList(state.items)
+            binding.tvAttendanceMessage.text = state.message
+            binding.tvLastAction.text =
+                if (state.message.isNotBlank()) "Lần thao tác gần nhất: ${state.message}"
+                else "Lần thao tác gần nhất: chưa có"
             binding.tvQueueCount.text = "Số thao tác đang chờ: ${state.queueCount}"
         }
     }

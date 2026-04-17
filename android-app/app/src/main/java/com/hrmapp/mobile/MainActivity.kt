@@ -2,50 +2,44 @@ package com.hrmapp.mobile
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.updatePadding
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.hrmapp.mobile.databinding.ActivityMainBinding
+import com.hrmapp.mobile.feature.session.SessionViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val sessionViewModel: SessionViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navHostFragment =
+        val navHost =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
+        val navController = navHost.navController
 
         binding.bottomNav.setupWithNavController(navController)
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-
-            val showBottomNav = when (destination.id) {
-                R.id.homeFragment,
-                R.id.attendanceFragment,
-                R.id.leaveFragment,
-                R.id.notificationFragment,
-                R.id.profileFragment -> true
-                else -> false
-            }
-
-            binding.bottomNav.visibility =
-                if (showBottomNav) View.VISIBLE else View.GONE
-
-            val bottomPadding = if (showBottomNav) {
-                resources.getDimensionPixelSize(R.dimen.bottom_nav_content_padding)
+        // 🔥 Auto login
+        sessionViewModel.loadSession {
+            if (sessionViewModel.isLoggedIn) {
+                navController.navigate(R.id.homeFragment)
             } else {
-                0
+                navController.navigate(R.id.loginFragment)
             }
+        }
 
-            binding.navHostFragment.updatePadding(bottom = bottomPadding)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.bottomNav.visibility =
+                if (destination.id == R.id.homeFragment) View.VISIBLE else View.GONE
         }
     }
 }

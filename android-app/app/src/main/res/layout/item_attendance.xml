@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/bg_card_primary"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvAttendanceType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CHECK_IN"
+        android:textColor="@color/text_primary"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvAttendanceTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="2026-04-20T08:30:00"
+        android:textColor="@color/text_secondary" />
+
+    <TextView
+        android:id="@+id/tvAttendanceStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="RECORDED"
+        android:textColor="@color/primary_600"
+        android:textStyle="bold" />
+</LinearLayout>

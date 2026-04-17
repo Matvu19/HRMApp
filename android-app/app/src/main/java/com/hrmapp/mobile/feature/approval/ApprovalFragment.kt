@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.hrmapp.mobile.R
 import com.hrmapp.mobile.databinding.FragmentApprovalBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -15,6 +16,7 @@ class ApprovalFragment : Fragment(R.layout.fragment_approval) {
     private val binding get() = _binding!!
 
     private val viewModel: ApprovalViewModel by viewModels()
+    private lateinit var adapter: ApprovalAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         _binding = FragmentApprovalBinding.bind(view)
@@ -23,31 +25,30 @@ class ApprovalFragment : Fragment(R.layout.fragment_approval) {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        viewModel.load(2L)
+        adapter = ApprovalAdapter { item ->
+            viewModel.select(item)
+        }
+
+        binding.rvApprovals.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvApprovals.adapter = adapter
+
+        binding.btnRefreshApproval.setOnClickListener {
+            viewModel.load()
+        }
 
         binding.btnApprove.setOnClickListener {
-            val item = viewModel.uiState.value?.item ?: return@setOnClickListener
-            viewModel.action(item.approvalStepId, "APPROVED", "Duyệt từ ứng dụng Android")
+            viewModel.action("APPROVED", "Duyệt từ ứng dụng Android")
         }
 
         binding.btnReject.setOnClickListener {
-            val item = viewModel.uiState.value?.item ?: return@setOnClickListener
-            viewModel.action(item.approvalStepId, "REJECTED", "Từ chối từ ứng dụng Android")
+            viewModel.action("REJECTED", "Từ chối từ ứng dụng Android")
         }
 
+        viewModel.load()
+
         viewModel.uiState.observe(viewLifecycleOwner) { state ->
-            val item = state.item
-            if (item != null) {
-                binding.tvApprovalTitle.text = "Yêu cầu phê duyệt #${item.approvalStepId}"
-                binding.tvApprovalSubtitle.text = "Bước ${item.stepNo} • ${item.approverRoleCode}"
-                binding.tvApprovalStatus.text = when (item.decision ?: item.status) {
-                    "APPROVED" -> "Đã duyệt"
-                    "REJECTED" -> "Từ chối"
-                    else -> "Chờ duyệt"
-                }
-            } else if (state.message.isNotBlank()) {
-                binding.tvApprovalStatus.text = state.message
-            }
+            adapter.submitList(state.items)
+            binding.tvApprovalMessage.text = state.message
         }
     }
 

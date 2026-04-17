@@ -7,35 +7,54 @@ import androidx.lifecycle.viewModelScope
 import com.hrmapp.mobile.core.network.ApprovalActionRequest
 import com.hrmapp.mobile.core.network.ApprovalApi
 import com.hrmapp.mobile.core.network.ApprovalStepItem
+import com.hrmapp.mobile.core.storage.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ApprovalViewModel @Inject constructor(
-    private val approvalApi: ApprovalApi
+    private val approvalApi: ApprovalApi,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     data class UiState(
         val isLoading: Boolean = false,
-        val item: ApprovalStepItem? = null,
+        val items: List<ApprovalStepItem> = emptyList(),
+        val selectedItem: ApprovalStepItem? = null,
         val message: String = ""
     )
 
     private val _uiState = MutableLiveData(UiState())
     val uiState: LiveData<UiState> = _uiState
 
-    fun load(approverEmployeeId: Long) {
+    fun load() {
         viewModelScope.launch {
             _uiState.value = UiState(isLoading = true)
 
             try {
-                val response = approvalApi.getPending(approverEmployeeId)
-                val first = response.data?.firstOrNull()
+                val session = sessionManager.sessionFlow.first()
+
+                if (!session.roleCode.equals("MANAGER", true)
+                    && !session.roleCode.equals("ADMIN", true)
+                    && !session.roleCode.equals("HR", true)
+                ) {
+                    _uiState.value = UiState(
+                        isLoading = false,
+                        message = "Bạn không có quyền xem hàng chờ phê duyệt"
+                    )
+                    return@launch
+                }
+
+                val response = approvalApi.getPending(session.employeeId)
+                val items = response.data ?: emptyList()
+
                 _uiState.value = UiState(
                     isLoading = false,
-                    item = first,
-                    message = if (first == null) "Không có yêu cầu chờ duyệt" else ""
+                    items = items,
+                    selectedItem = items.firstOrNull(),
+                    message = if (items.isEmpty()) "Không có yêu cầu chờ duyệt" else ""
                 )
             } catch (e: Exception) {
                 _uiState.value = UiState(
@@ -46,20 +65,24 @@ class ApprovalViewModel @Inject constructor(
         }
     }
 
-    fun action(stepId: Long, decision: String, note: String) {
+    fun select(item: ApprovalStepItem) {
+        _uiState.value = _uiState.value?.copy(selectedItem = item)
+    }
+
+    fun action(decision: String, note: String) {
         viewModelScope.launch {
             try {
-                val response = approvalApi.action(
+                val item = _uiState.value?.selectedItem ?: return@launch
+
+                approvalApi.action(
                     ApprovalActionRequest(
-                        approvalStepId = stepId,
+                        approvalStepId = item.approvalStepId,
                         decision = decision,
                         decisionNote = note
                     )
                 )
-                _uiState.value = _uiState.value?.copy(
-                    item = response.data,
-                    message = if (decision == "APPROVED") "Đã duyệt yêu cầu" else "Đã từ chối yêu cầu"
-                )
+
+                load()
             } catch (e: Exception) {
                 _uiState.value = _uiState.value?.copy(
                     message = e.message ?: "Không thực hiện được thao tác"

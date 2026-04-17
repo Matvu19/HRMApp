@@ -6,6 +6,7 @@ import com.hrmapp.mobile.core.network.AttendanceApi
 import com.hrmapp.mobile.core.network.AuthApi
 import com.hrmapp.mobile.core.network.AuthInterceptor
 import com.hrmapp.mobile.core.network.DashboardApi
+import com.hrmapp.mobile.core.network.EmployeeApi
 import com.hrmapp.mobile.core.network.LeaveApi
 import com.hrmapp.mobile.core.network.NotificationApi
 import com.hrmapp.mobile.core.storage.SessionManager
@@ -80,4 +81,7 @@ object NetworkModule {
 
     @Provides @Singleton
     fun provideLeaveApi(retrofit: Retrofit): LeaveApi = retrofit.create(LeaveApi::class.java)
+
+    @Provides @Singleton
+    fun provideEmployeeApi(retrofit: Retrofit): EmployeeApi = retrofit.create(EmployeeApi::class.java)
 }

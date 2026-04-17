@@ -1,71 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/page_background">
+    android:background="@color/page_background"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <LinearLayout
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thông báo"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnRefreshNotifications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Làm mới" />
+
+    <TextView
+        android:id="@+id/tvNotificationMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/space_lg">
+        android:layout_marginTop="12dp"
+        android:text=""
+        android:textColor="@color/text_secondary" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/notification_title"
-            android:textColor="@color/text_primary"
-            android:textSize="@dimen/text_h2"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:background="@drawable/bg_card_primary"
-            android:orientation="vertical"
-            android:padding="@dimen/space_lg">
-
-            <TextView
-                android:id="@+id/tvNotificationTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Có đơn nghỉ cần phê duyệt"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvNotificationBody"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_sm"
-                android:text="Nhân viên Employee One vừa gửi đơn nghỉ."
-                android:textColor="@color/text_secondary" />
-
-            <TextView
-                android:id="@+id/tvNotificationDeeplink"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_sm"
-                android:text="hrmapp://approvals/1"
-                android:textColor="@color/primary_600" />
-
-            <Button
-                android:id="@+id/btnMarkRead"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md"
-                android:minHeight="@dimen/button_min_height"
-                android:text="@string/notification_mark_read" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tvNotificationStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:text="@string/notification_unread"
-            android:textColor="@color/warning_orange" />
-
-    </LinearLayout>
-</ScrollView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvNotifications"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight="1" />
+</LinearLayout>

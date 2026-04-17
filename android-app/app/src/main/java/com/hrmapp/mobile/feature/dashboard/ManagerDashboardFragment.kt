@@ -24,15 +24,18 @@ class ManagerDashboardFragment : Fragment(R.layout.fragment_manager_dashboard) {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        viewModel.load(2L)
+        viewModel.load()
 
         viewModel.uiState.observe(viewLifecycleOwner) { state ->
-            val data = state.data ?: return@observe
-            binding.tvPendingApprovals.text = data.pendingApprovalCount.toString()
-            binding.tvTeamSize.text = data.teamSize.toString()
-            binding.tvUnreadAlerts.text = data.unreadNotificationCount.toString()
-            binding.tvRealtimeHighlight.text =
-                "Hôm nay có ${data.pendingApprovalCount} yêu cầu chờ duyệt."
+            if (state.data != null) {
+                binding.tvPendingApprovals.text = state.data.pendingApprovalCount.toString()
+                binding.tvTeamSize.text = state.data.teamSize.toString()
+                binding.tvUnreadAlerts.text = state.data.unreadNotificationCount.toString()
+                binding.tvRealtimeHighlight.text =
+                    "Hôm nay có ${state.data.pendingApprovalCount} yêu cầu chờ duyệt."
+            } else if (state.message.isNotBlank()) {
+                binding.tvRealtimeHighlight.text = state.message
+            }
         }
     }
 
