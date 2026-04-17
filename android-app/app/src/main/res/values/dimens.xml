@@ -1,0 +1,18 @@
+<resources>
+    <dimen name="bottom_nav_content_padding">72dp</dimen>
+
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_sm">8dp</dimen>
+    <dimen name="space_md">12dp</dimen>
+    <dimen name="space_lg">16dp</dimen>
+    <dimen name="space_xl">24dp</dimen>
+
+    <dimen name="text_h1">28sp</dimen>
+    <dimen name="text_h2">20sp</dimen>
+    <dimen name="text_h3">16sp</dimen>
+    <dimen name="text_body">14sp</dimen>
+    <dimen name="text_caption">12sp</dimen>
+
+    <dimen name="button_min_height">48dp</dimen>
+    <dimen name="card_radius">16dp</dimen>
+</resources>

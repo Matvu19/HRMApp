@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: ${AZURE_POSTGRES_URL}
+    username: ${AZURE_POSTGRES_USERNAME}
+    password: ${AZURE_POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+  data:
+    redis:
+      host: ${AZURE_REDIS_HOST}
+      port: ${AZURE_REDIS_PORT:6379}
+
+app:
+  storage:
+    endpoint: ${AZURE_BLOB_ENDPOINT}
+    account-name: ${AZURE_BLOB_ACCOUNT_NAME}
+    account-key: ${AZURE_BLOB_ACCOUNT_KEY}
+    container-name: ${AZURE_BLOB_CONTAINER:hrmapp-files}

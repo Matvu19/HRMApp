@@ -1,0 +1,13 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.HRMApp" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary_600</item>
+        <item name="colorPrimaryContainer">@color/primary_700</item>
+        <item name="colorSecondary">@color/secondary_500</item>
+
+        <item name="android:statusBarColor">@color/primary_700</item>
+        <item name="android:navigationBarColor">@color/surface</item>
+        <item name="android:windowBackground">@color/page_background</item>
+    </style>
+
+</resources>

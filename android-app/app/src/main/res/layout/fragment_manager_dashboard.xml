@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/page_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Back -->
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="← Quay lại" />
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Bảng điều khiển quản lý"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!-- Pending approvals -->
+        <TextView
+            android:id="@+id/tvPendingApprovals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="0"
+            android:textSize="18sp" />
+
+        <!-- Team size -->
+        <TextView
+            android:id="@+id/tvTeamSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp" />
+
+        <!-- Unread -->
+        <TextView
+            android:id="@+id/tvUnreadAlerts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp" />
+
+        <!-- Highlight -->
+        <TextView
+            android:id="@+id/tvRealtimeHighlight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="..."
+            android:textStyle="italic" />
+
+    </LinearLayout>
+</ScrollView>

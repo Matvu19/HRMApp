@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">HRMApp</string>
+
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_attendance">Chấm công</string>
+    <string name="nav_requests">Yêu cầu</string>
+    <string name="nav_notifications">Thông báo</string>
+    <string name="nav_profile">Hồ sơ</string>
+
+    <string name="login_title">Chào mừng đến với HRMApp</string>
+    <string name="login_subtitle">Ứng dụng nhân sự thời gian thực dành cho nhân viên và quản lý</string>
+    <string name="hint_username">Tên đăng nhập</string>
+    <string name="hint_password">Mật khẩu</string>
+    <string name="action_login">Đăng nhập</string>
+
+    <string name="home_title">Trang chủ</string>
+    <string name="home_subtitle">Truy cập nhanh các chức năng thường dùng</string>
+
+    <string name="home_manager_actions">Tác vụ dành cho quản lý</string>
+    <string name="home_open_approval">Mở hàng chờ phê duyệt</string>
+    <string name="home_open_dashboard">Mở bảng điều khiển quản lý</string>
+
+    <string name="home_employee_actions">Tác vụ dành cho nhân viên</string>
+    <string name="home_open_attendance">Mở chấm công</string>
+    <string name="home_open_leave">Mở đơn xin nghỉ</string>
+
+    <string name="attendance_title">Chấm công</string>
+    <string name="attendance_network_online">Mạng: Đang kết nối</string>
+    <string name="attendance_network_offline">Mạng: Mất kết nối</string>
+    <string name="attendance_gps_available">Vị trí: Sẵn sàng</string>
+    <string name="attendance_map_placeholder">Khu vực bản đồ / vị trí</string>
+    <string name="attendance_checkin">Chấm công vào</string>
+    <string name="attendance_checkout">Chấm công ra</string>
+    <string name="attendance_last_action_none">Lần thao tác gần nhất: chưa có</string>
+    <string name="attendance_queue_title">Hàng chờ ngoại tuyến</string>
+    <string name="attendance_queue_count">Số thao tác đang chờ: %1$d</string>
+    <string name="attendance_queue_hint">Khi có mạng, hệ thống sẽ tự đồng bộ.</string>
+
+    <string name="leave_title">Đơn xin nghỉ</string>
+    <string name="leave_hint_type">Loại nghỉ (Ví dụ: Nghỉ phép năm)</string>
+    <string name="leave_hint_from">Từ ngày (dd/MM/yyyy)</string>
+    <string name="leave_hint_to">Đến ngày (dd/MM/yyyy)</string>
+    <string name="leave_hint_reason">Lý do nghỉ</string>
+    <string name="leave_submit">Gửi đơn xin nghỉ</string>
+    <string name="leave_empty_result">Chưa có đơn nào được gửi</string>
+
+    <string name="notification_title">Thông báo</string>
+    <string name="notification_mark_read">Đánh dấu đã đọc</string>
+    <string name="notification_unread">Chưa đọc</string>
+    <string name="notification_read">Đã đọc</string>
+
+    <string name="profile_title">Hồ sơ cá nhân</string>
+    <string name="profile_timeline">Lịch sử thay đổi</string>
+
+    <string name="approval_title">Hàng chờ phê duyệt</string>
+    <string name="approval_pending">Chờ duyệt</string>
+    <string name="approval_approved">Đã duyệt</string>
+    <string name="approval_rejected">Từ chối</string>
+    <string name="approval_btn_approve">Duyệt</string>
+    <string name="approval_btn_reject">Từ chối</string>
+
+    <string name="dashboard_title">Bảng điều khiển quản lý</string>
+    <string name="dashboard_pending_approvals">Yêu cầu chờ duyệt</string>
+    <string name="dashboard_team_size">Quy mô đội nhóm</string>
+    <string name="dashboard_unread_alerts">Thông báo chưa đọc</string>
+    <string name="dashboard_realtime_highlight">Điểm nhấn cập nhật nhanh</string>
+</resources>
