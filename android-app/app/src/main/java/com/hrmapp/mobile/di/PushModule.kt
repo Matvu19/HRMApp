@@ -1,8 +1,8 @@
 package com.hrmapp.mobile.di
 
 import android.content.Context
-import com.hrmapp.mobile.core.storage.AttendanceQueueStore
-import com.hrmapp.mobile.core.storage.SessionManager
+import com.hrmapp.mobile.core.push.PushManager
+import com.hrmapp.mobile.core.push.PushTokenStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,21 +12,21 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object StorageModule {
+object PushModule {
 
     @Provides
     @Singleton
-    fun provideSessionManager(
+    fun providePushTokenStore(
         @ApplicationContext context: Context
-    ): SessionManager {
-        return SessionManager(context)
+    ): PushTokenStore {
+        return PushTokenStore(context)
     }
 
     @Provides
     @Singleton
-    fun provideAttendanceQueueStore(
-        @ApplicationContext context: Context
-    ): AttendanceQueueStore {
-        return AttendanceQueueStore(context)
+    fun providePushManager(
+        pushTokenStore: PushTokenStore
+    ): PushManager {
+        return PushManager(pushTokenStore)
     }
 }

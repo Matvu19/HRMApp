@@ -1,7 +1,6 @@
 package com.hrmapp.mobile.core.storage
 
 import android.content.Context
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -41,23 +40,35 @@ class SessionManager(private val context: Context) {
     }
 
     suspend fun clearSession() {
-        context.dataStore.edit { it.clear() }
+        context.dataStore.edit { prefs ->
+            prefs.clear()
+        }
     }
 
     val accessTokenFlow: Flow<String> =
-        context.dataStore.data.map { it[ACCESS_TOKEN] ?: "" }
+        context.dataStore.data.map { prefs ->
+            prefs[ACCESS_TOKEN] ?: ""
+        }
 
     val usernameFlow: Flow<String> =
-        context.dataStore.data.map { it[USERNAME] ?: "" }
+        context.dataStore.data.map { prefs ->
+            prefs[USERNAME] ?: ""
+        }
 
     val roleCodeFlow: Flow<String> =
-        context.dataStore.data.map { it[ROLE_CODE] ?: "" }
+        context.dataStore.data.map { prefs ->
+            prefs[ROLE_CODE] ?: ""
+        }
 
     val userIdFlow: Flow<Long> =
-        context.dataStore.data.map { it[USER_ID] ?: 0L }
+        context.dataStore.data.map { prefs ->
+            prefs[USER_ID] ?: 0L
+        }
 
     val employeeIdFlow: Flow<Long> =
-        context.dataStore.data.map { it[EMPLOYEE_ID] ?: 0L }
+        context.dataStore.data.map { prefs ->
+            prefs[EMPLOYEE_ID] ?: 0L
+        }
 
     val sessionFlow: Flow<SessionData> =
         context.dataStore.data.map { prefs ->

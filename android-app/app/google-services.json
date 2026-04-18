@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "750048107336",
+    "project_id": "hrmapp-3bd01",
+    "storage_bucket": "hrmapp-3bd01.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750048107336:android:90b5f5ccaa88880d09717d",
+        "android_client_info": {
+          "package_name": "com.hrmapp.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOzMyKNMZpLxXvx51U6G4IPhkNO0zrH7s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Vị trí: Sẵn sàng"
+            android:text="Vị trí: Chưa cấp quyền"
             android:textColor="@color/text_secondary" />
 
         <LinearLayout
@@ -46,7 +46,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Khu vực bản đồ / vị trí"
+                android:text="Vị trí hiện tại"
                 android:textColor="@color/text_primary"
                 android:textStyle="bold" />
 
@@ -55,9 +55,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Vĩ độ: 10.7769, Kinh độ: 106.7009"
+                android:text="Chưa lấy được tọa độ"
                 android:textColor="@color/text_secondary" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btnGrantLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_button_outline"
+            android:text="Cấp quyền vị trí"
+            android:textAllCaps="false"
+            android:textColor="@color/button_text_outline"
+            app:backgroundTint="@null" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -92,16 +103,38 @@
                 app:backgroundTint="@null" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnRefreshAttendance"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:background="@drawable/bg_button_outline"
-            android:text="Làm mới lịch sử"
-            android:textAllCaps="false"
-            android:textColor="@color/button_text_outline"
-            app:backgroundTint="@null" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnRefreshAttendance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button_outline"
+                android:text="Làm mới lịch sử"
+                android:textAllCaps="false"
+                android:textColor="@color/button_text_outline"
+                app:backgroundTint="@null" />
+
+            <Space
+                android:layout_width="12dp"
+                android:layout_height="1dp" />
+
+            <Button
+                android:id="@+id/btnRetryQueue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button_outline"
+                android:text="Gửi lại hàng chờ"
+                android:textAllCaps="false"
+                android:textColor="@color/button_text_outline"
+                app:backgroundTint="@null" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tvLastAction"
