@@ -68,9 +68,10 @@
             android:visibility="gone">
 
             <TextView
+                android:id="@+id/tvManagerSectionTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tác vụ dành cho quản lý"
+                android:text="Khu vực quản lý"
                 android:textColor="@color/text_primary"
                 android:textStyle="bold" />
 
@@ -106,6 +107,7 @@
             android:padding="16dp">
 
             <TextView
+                android:id="@+id/tvStaffSectionTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tác vụ dành cho nhân viên"
@@ -130,6 +132,17 @@
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_button_primary"
                 android:text="Mở đơn xin nghỉ"
+                android:textAllCaps="false"
+                android:textColor="@color/button_text_primary"
+                app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/btnOpenPayroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_button_primary"
+                android:text="Mở bảng lương"
                 android:textAllCaps="false"
                 android:textColor="@color/button_text_primary"
                 app:backgroundTint="@null" />

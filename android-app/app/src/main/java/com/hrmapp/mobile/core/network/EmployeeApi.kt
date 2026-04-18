@@ -1,6 +1,8 @@
 package com.hrmapp.mobile.core.network
 
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 data class EmployeeProfileData(
@@ -19,9 +21,21 @@ data class EmployeeProfileData(
     val status: String?
 )
 
+data class UpdateEmployeeProfileRequest(
+    val fullName: String,
+    val personalPhone: String?,
+    val gender: String?
+)
+
 interface EmployeeApi {
     @GET("api/employees/{employeeId}")
     suspend fun getEmployeeById(
         @Path("employeeId") employeeId: Long
+    ): ApiResponse<EmployeeProfileData>
+
+    @PUT("api/employees/{employeeId}")
+    suspend fun updateEmployeeById(
+        @Path("employeeId") employeeId: Long,
+        @Body request: UpdateEmployeeProfileRequest
     ): ApiResponse<EmployeeProfileData>
 }

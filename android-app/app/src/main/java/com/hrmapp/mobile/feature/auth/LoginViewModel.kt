@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hrmapp.mobile.core.network.AuthApi
 import com.hrmapp.mobile.core.network.LoginRequest
+import com.hrmapp.mobile.core.storage.SavedAccount
 import com.hrmapp.mobile.core.storage.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,68 +18,88 @@ class LoginViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
-    data class LoginUiState(
+    data class UiState(
         val isLoading: Boolean = false,
         val isSuccess: Boolean = false,
-        val message: String = "",
         val username: String = "",
-        val roleCode: String = ""
+        val roleCode: String = "",
+        val message: String = "",
+        val savedAccounts: List<SavedAccount> = emptyList()
     )
 
-    private val _uiState = MutableLiveData(LoginUiState())
-    val uiState: LiveData<LoginUiState> = _uiState
+    private val _uiState = MutableLiveData(UiState())
+    val uiState: LiveData<UiState> = _uiState
 
-    fun login(username: String, password: String) {
-        if (username.isBlank() || password.isBlank()) {
-            _uiState.value = LoginUiState(
-                message = "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu"
-            )
-            return
-        }
+    init {
+        loadSavedAccounts()
+    }
 
+    fun loadSavedAccounts() {
         viewModelScope.launch {
-            _uiState.value = LoginUiState(isLoading = true)
+            sessionManager.savedAccountsFlow.collect { accounts ->
+                _uiState.postValue(
+                    _uiState.value?.copy(savedAccounts = accounts) ?: UiState(savedAccounts = accounts)
+                )
+            }
+        }
+    }
+
+    fun removeSavedAccount(username: String) {
+        viewModelScope.launch {
+            sessionManager.removeSavedAccount(username)
+        }
+    }
+
+    fun login(
+        username: String,
+        password: String
+    ) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value?.copy(
+                isLoading = true,
+                isSuccess = false,
+                message = ""
+            )
 
             try {
                 val response = authApi.login(
                     LoginRequest(
-                        username = username.trim(),
-                        password = password.trim()
+                        username = username,
+                        password = password
                     )
                 )
 
-                if (response.success && response.data != null) {
-                    sessionManager.saveSession(
-                        accessToken = response.data.accessToken,
-                        refreshToken = response.data.refreshToken,
-                        username = response.data.username,
-                        roleCode = response.data.roleCode,
-                        userId = response.data.userId,
-                        employeeId = response.data.employeeId
-                    )
-
-                    _uiState.value = LoginUiState(
+                val data = response.data
+                if (data == null) {
+                    _uiState.value = _uiState.value?.copy(
                         isLoading = false,
-                        isSuccess = true,
-                        message = "Đăng nhập thành công",
-                        username = response.data.username,
-                        roleCode = response.data.roleCode
+                        isSuccess = false,
+                        message = response.message ?: "Đăng nhập thất bại"
                     )
-                } else {
-                    _uiState.value = LoginUiState(
-                        isLoading = false,
-                        message = response.message.ifBlank { "Đăng nhập thất bại" }
-                    )
+                    return@launch
                 }
-            } catch (e: IOException) {
-                _uiState.value = LoginUiState(
+
+                sessionManager.saveSession(
+                    accessToken = data.accessToken,
+                    refreshToken = data.refreshToken,
+                    username = data.username,
+                    roleCode = data.roleCode,
+                    userId = data.userId,
+                    employeeId = data.employeeId
+                )
+
+                _uiState.value = _uiState.value?.copy(
                     isLoading = false,
-                    message = "Không kết nối được tới máy chủ. Hãy kiểm tra backend đang chạy."
+                    isSuccess = true,
+                    username = data.username,
+                    roleCode = data.roleCode,
+                    message = response.message ?: "Đăng nhập thành công"
                 )
             } catch (e: Exception) {
-                _uiState.value = LoginUiState(
+                _uiState.value = _uiState.value?.copy(
                     isLoading = false,
-                    message = e.message ?: "Có lỗi xảy ra khi đăng nhập"
+                    isSuccess = false,
+                    message = e.message ?: "Không kết nối được máy chủ"
                 )
             }
         }

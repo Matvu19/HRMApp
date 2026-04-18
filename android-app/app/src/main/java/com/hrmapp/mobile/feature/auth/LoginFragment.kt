@@ -9,6 +9,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.hrmapp.mobile.R
 import com.hrmapp.mobile.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +25,7 @@ class LoginFragment : Fragment() {
     private val splashGateViewModel: SplashGateViewModel by viewModels()
 
     private var didAutoNavigate = false
+    private lateinit var savedAccountAdapter: SavedAccountAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +37,21 @@ class LoginFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        savedAccountAdapter = SavedAccountAdapter(
+            onUseClick = { account ->
+                binding.etUsername.setText(account.username)
+                binding.etPassword.requestFocus()
+                Snackbar.make(binding.root, "Đã chọn tài khoản ${account.username}", Snackbar.LENGTH_SHORT).show()
+            },
+            onRemoveClick = { account ->
+                loginViewModel.removeSavedAccount(account.username)
+                Snackbar.make(binding.root, "Đã xóa ${account.username}", Snackbar.LENGTH_SHORT).show()
+            }
+        )
+
+        binding.rvSavedAccounts.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvSavedAccounts.adapter = savedAccountAdapter
+
         observeGate()
         observeLogin()
 
@@ -57,7 +75,8 @@ class LoginFragment : Fragment() {
             val navController = findNavController()
             val currentId = navController.currentDestination?.id
 
-            if (state.checked &&
+            if (
+                state.checked &&
                 state.loggedIn &&
                 !didAutoNavigate &&
                 currentId == R.id.loginFragment
@@ -78,6 +97,11 @@ class LoginFragment : Fragment() {
             binding.etPassword.isEnabled = !state.isLoading
 
             binding.tvLoginMessage.text = state.message
+
+            val hasSavedAccounts = state.savedAccounts.isNotEmpty()
+            binding.tvSavedAccountTitle.visibility = if (hasSavedAccounts) View.VISIBLE else View.GONE
+            binding.rvSavedAccounts.visibility = if (hasSavedAccounts) View.VISIBLE else View.GONE
+            savedAccountAdapter.submitList(state.savedAccounts)
 
             if (state.isSuccess) {
                 Toast.makeText(

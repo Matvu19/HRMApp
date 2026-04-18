@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.hrmapp.mobile.core.ui.setSafeClickListener
 import com.hrmapp.mobile.databinding.FragmentLeaveBinding
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,6 +34,10 @@ class LeaveFragment : Fragment() {
         adapter = LeaveAdapter()
         binding.rvLeaveHistory.layoutManager = LinearLayoutManager(requireContext())
         binding.rvLeaveHistory.adapter = adapter
+
+        binding.btnBackLeave.setSafeClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
 
         binding.btnSubmitLeave.setSafeClickListener {
             val dateFrom = binding.etDateFrom.text.toString().ifBlank { "2026-04-20" }

@@ -50,6 +50,10 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.leaveFragment)
         }
 
+        binding.btnOpenPayroll.setSafeClickListener {
+            findNavController().navigate(R.id.payrollFragment)
+        }
+
         binding.btnLogout.setSafeClickListener {
             viewModel.logout {
                 val navController = findNavController()
@@ -71,6 +75,8 @@ class HomeFragment : Fragment() {
             binding.tvEmployeeCode.text =
                 if (state.employeeCode.isNotBlank()) "Mã nhân viên: ${state.employeeCode}" else ""
             binding.tvHomeMessage.text = state.message
+            binding.tvManagerSectionTitle.text = state.managerTitle
+            binding.tvStaffSectionTitle.text = state.staffTitle
 
             binding.cardManagerActions.visibility =
                 if (state.isManager) View.VISIBLE else View.GONE

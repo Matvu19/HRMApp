@@ -27,6 +27,8 @@ class HomeViewModel @Inject constructor(
         val fullName: String = "",
         val employeeCode: String = "",
         val isManager: Boolean = false,
+        val managerTitle: String = "",
+        val staffTitle: String = "",
         val message: String = ""
     )
 
@@ -40,6 +42,10 @@ class HomeViewModel @Inject constructor(
                 val profileResponse = employeeApi.getEmployeeById(session.employeeId)
                 val profile: EmployeeProfileData? = profileResponse.data
 
+                val isManager = session.roleCode.equals("MANAGER", ignoreCase = true)
+                        || session.roleCode.equals("ADMIN", ignoreCase = true)
+                        || session.roleCode.equals("HR", ignoreCase = true)
+
                 _uiState.value = HomeUiState(
                     username = session.username,
                     roleCode = session.roleCode,
@@ -47,9 +53,9 @@ class HomeViewModel @Inject constructor(
                     userId = session.userId,
                     fullName = profile?.fullName ?: session.username,
                     employeeCode = profile?.employeeCode ?: "",
-                    isManager = session.roleCode.equals("MANAGER", ignoreCase = true)
-                            || session.roleCode.equals("ADMIN", ignoreCase = true)
-                            || session.roleCode.equals("HR", ignoreCase = true),
+                    isManager = isManager,
+                    managerTitle = if (isManager) "Khu vực quản lý" else "",
+                    staffTitle = if (isManager) "Tác vụ nhân sự cá nhân" else "Tác vụ dành cho nhân viên",
                     message = if (profile == null) "Không tải được hồ sơ nhân sự" else ""
                 )
             } catch (e: Exception) {

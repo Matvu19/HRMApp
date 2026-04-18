@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hrmapp.mobile.core.network.ApprovalApi
-import com.hrmapp.mobile.core.network.ApprovalStepItem
 import com.hrmapp.mobile.core.network.DashboardApi
 import com.hrmapp.mobile.core.network.ManagerDashboardData
 import com.hrmapp.mobile.core.storage.SessionManager
@@ -13,18 +11,21 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @HiltViewModel
 class ManagerDashboardViewModel @Inject constructor(
     private val dashboardApi: DashboardApi,
-    private val approvalApi: ApprovalApi,
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
     data class UiState(
         val isLoading: Boolean = false,
         val data: ManagerDashboardData? = null,
-        val pendingApprovals: List<ApprovalStepItem> = emptyList(),
+        val attendanceRateText: String = "0%",
+        val attendanceRateNote: String = "",
+        val quickHighlight: String = "",
+        val teamHealth: String = "",
         val message: String = ""
     )
 
@@ -44,26 +45,65 @@ class ManagerDashboardViewModel @Inject constructor(
                 ) {
                     _uiState.value = UiState(
                         isLoading = false,
-                        message = "Bạn không có quyền xem bảng điều khiển quản lý"
+                        message = "Bạn không có quyền xem dashboard quản lý"
                     )
                     return@launch
                 }
 
-                val dashboardResponse = dashboardApi.getManagerDashboard(session.employeeId)
-                val approvalResponse = approvalApi.getPending(session.employeeId)
+                val response = dashboardApi.getManagerDashboard(session.employeeId)
+                val data = response.data
 
-                val pendingList = approvalResponse.data ?: emptyList()
+                if (data == null) {
+                    _uiState.value = UiState(
+                        isLoading = false,
+                        message = "Không có dữ liệu dashboard"
+                    )
+                    return@launch
+                }
+
+                val attendanceRate = if (data.teamSize > 0) {
+                    ((data.todayCheckinCount.toDouble() / data.teamSize.toDouble()) * 100).roundToInt()
+                } else {
+                    0
+                }
+
+                val attendanceRateNote = if (data.teamSize > 0) {
+                    "${data.todayCheckinCount}/${data.teamSize} nhân sự đã check-in hôm nay"
+                } else {
+                    "Chưa có dữ liệu nhân sự trong team"
+                }
+
+                val quickHighlight = buildString {
+                    append("Hôm nay team có ${data.todayCheckinCount} lượt check-in. ")
+                    append("Hiện còn ${data.pendingApprovalCount} yêu cầu chờ duyệt. ")
+                    append("Bạn đang có ${data.unreadNotificationCount} thông báo chưa đọc.")
+                }
+
+                val teamHealth = when {
+                    data.teamSize == 0 -> "Team chưa có dữ liệu nhân sự."
+                    attendanceRate >= 80 && data.pendingApprovalCount <= 2 ->
+                        "Vận hành ổn định. Tỷ lệ hiện diện tốt và lượng phê duyệt đang ở mức an toàn."
+                    attendanceRate < 50 ->
+                        "Cần chú ý hiện diện hôm nay. Tỷ lệ check-in còn thấp so với quy mô team."
+                    data.pendingApprovalCount >= 5 ->
+                        "Khối lượng phê duyệt đang tăng. Nên ưu tiên xử lý hàng chờ để tránh dồn việc."
+                    else ->
+                        "Team đang vận hành bình thường, nhưng vẫn cần theo dõi thêm các yêu cầu đang chờ."
+                }
 
                 _uiState.value = UiState(
                     isLoading = false,
-                    data = dashboardResponse.data,
-                    pendingApprovals = pendingList,
-                    message = if (dashboardResponse.data == null) "Không có dữ liệu dashboard" else ""
+                    data = data,
+                    attendanceRateText = "$attendanceRate%",
+                    attendanceRateNote = attendanceRateNote,
+                    quickHighlight = quickHighlight,
+                    teamHealth = teamHealth,
+                    message = ""
                 )
             } catch (e: Exception) {
                 _uiState.value = UiState(
                     isLoading = false,
-                    message = e.message ?: "Không tải được bảng điều khiển"
+                    message = e.message ?: "Không tải được dashboard quản lý"
                 )
             }
         }

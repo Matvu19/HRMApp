@@ -7,28 +7,12 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.hrmapp.mobile.feature.auth.LoginFragment"
-        android:label="Login">
-        <action
-            android:id="@+id/action_loginFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+        android:label="Login" />
 
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.hrmapp.mobile.feature.home.HomeFragment"
         android:label="Home" />
-
-    <fragment
-        android:id="@+id/attendanceFragment"
-        android:name="com.hrmapp.mobile.feature.attendance.AttendanceFragment"
-        android:label="Attendance" />
-
-    <fragment
-        android:id="@+id/leaveFragment"
-        android:name="com.hrmapp.mobile.feature.leave.LeaveFragment"
-        android:label="Leave" />
 
     <fragment
         android:id="@+id/notificationFragment"
@@ -41,12 +25,32 @@
         android:label="Profile" />
 
     <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.hrmapp.mobile.feature.settings.SettingsFragment"
+        android:label="Settings" />
+
+    <fragment
+        android:id="@+id/attendanceFragment"
+        android:name="com.hrmapp.mobile.feature.attendance.AttendanceFragment"
+        android:label="Attendance" />
+
+    <fragment
+        android:id="@+id/leaveFragment"
+        android:name="com.hrmapp.mobile.feature.leave.LeaveFragment"
+        android:label="Leave" />
+
+    <fragment
         android:id="@+id/approvalFragment"
         android:name="com.hrmapp.mobile.feature.approval.ApprovalFragment"
-        android:label="Approvals" />
+        android:label="Approval" />
 
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="com.hrmapp.mobile.feature.dashboard.ManagerDashboardFragment"
         android:label="Dashboard" />
+
+    <fragment
+        android:id="@+id/payrollFragment"
+        android:name="com.hrmapp.mobile.feature.payroll.PayrollFragment"
+        android:label="Payroll" />
 </navigation>

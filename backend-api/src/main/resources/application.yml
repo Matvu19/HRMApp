@@ -4,6 +4,7 @@ spring:
   application:
     name: hrmapp-backend-api
 
+
 server:
   port: 8080
 
